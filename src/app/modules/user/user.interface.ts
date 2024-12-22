@@ -1,3 +1,4 @@
+import { USER_ROLE } from "./user.constrants"
 
 export interface IUser {
     name : string
@@ -6,3 +7,5 @@ export interface IUser {
     role : "user" | "admin"
     isBlocked : boolean
 }
+
+export type TUserRole = keyof typeof USER_ROLE;

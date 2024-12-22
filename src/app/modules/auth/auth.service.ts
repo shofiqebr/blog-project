@@ -14,7 +14,8 @@ const login = async (payload: {email: string; password: string}) =>{
     if (!user){
         throw new Error("This user is not found !")
     }
-
+    
+    const isBlocked = user?.isBlocked
     
     if(isBlocked) {
         throw new Error("This user is blocked !!")
@@ -34,11 +35,14 @@ const login = async (payload: {email: string; password: string}) =>{
         role: user?.role,
     }
 
-    const token = jwt.sign(jwtPayload, )
+    const token = jwt.sign(jwtPayload, "secret", { expiresIn: '15d' });
+
+    return {token, user};
 
 }
 
 
 export const AuthService = {
     register,
+    login
 }
