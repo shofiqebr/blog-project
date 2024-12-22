@@ -10,10 +10,14 @@ const register = catchAsync(async(req: Request, res: Response)=> {
     const result = await AuthService.register(req.body);
 
     sendResponse(res,{
-        statusCode: StatusCodes.CREATED,
         status: true,
         message: "User rgistered successfully",
-        data: result 
+        statusCode: StatusCodes.CREATED,
+        data: {
+            _id: result._id,
+            name: result.name,
+            email: result.email
+        }
     })
 })
 
@@ -24,8 +28,9 @@ const login = catchAsync(async(req: Request, res: Response)=>{
         statusCode: StatusCodes.ACCEPTED,
         status: true,
         message: "User logged in successfully",
-        token: result?.token,
-        data: result?.user
+        // token: result?.token,
+        data: 
+        {token: result?.token}
     })
 })
 

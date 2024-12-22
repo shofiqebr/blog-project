@@ -7,6 +7,8 @@ import User from "../app/modules/user/user.model";
 
 const auth = (...requiredRoles: TUserRole[]) => {
     return catchAsync(async ( req: Request, res: Response, next: NextFunction)=> {
+        const token = req.headers.authorization;
+
         if(!token) {
             throw new Error ( 'You are not authorized! ')
         }
@@ -15,7 +17,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
             "secret",
         ) as JwtPayload
 
-        console.log({decoded})
+        // console.log({decoded})
 
         const { role, email} = decoded;
 
@@ -25,14 +27,25 @@ const auth = (...requiredRoles: TUserRole[]) => {
             throw new Error ('This is not found ! ')
         }
 
-        const userStatus = user?.isBlocked
+       
 
-        if (userStatus){
+        if ( user?.isBlocked){
             throw new Error(
                 "You are not authorized"
             )
         }
-        req.user = decoded as JwtPayload;
+
+        if (requiredRoles && !requiredRoles.includes(role)) {
+            throw new Error(
+              'You are not authorized',
+            );
+          }
+
+        req.user =  {
+            _id: user._id,
+            role: user.role,
+            email: user.email,
+          } as JwtPayload;
         next();
     } )
 }
