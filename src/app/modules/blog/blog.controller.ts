@@ -31,6 +31,19 @@ const createBlog = async (req: Request, res: Response) => {
   }
 
 
+  const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
+    const blogs = await blogService.getAllBlogs(req.query);
+  
+    res.status(200).json({
+      success: true,
+      message: "Blogs fetched successfully",
+      statusCode: 200,
+      data: blogs,
+    });
+  });
+  
+
+
   const updateBlog = catchAsync(async (req: Request, res: Response) => {
     const blogId = req.params.id;
 
@@ -76,4 +89,5 @@ const createBlog = async (req: Request, res: Response) => {
     createBlog,
     updateBlog,
     deleteBlog,
+    getAllBlogs,
   }

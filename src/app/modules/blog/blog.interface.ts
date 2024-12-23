@@ -8,3 +8,15 @@ export interface IBlog {
   isPublished: boolean; 
  
 }
+
+
+export interface BlogQueryOptions {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  fields?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any; 
+}
