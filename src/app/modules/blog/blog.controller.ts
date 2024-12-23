@@ -45,7 +45,7 @@ const createBlog = async (req: Request, res: Response) => {
    
    // Extract user from req.user (added by auth middleware)
    const user = req.user as JwtPayload;
-   
+
     const updatedBlog = await blogService.updateBlog(blogId, user, { title, content });
   
     res.status(200).json({
@@ -57,7 +57,23 @@ const createBlog = async (req: Request, res: Response) => {
   });
 
 
+  const deleteBlog = catchAsync(async (req: Request, res: Response) => {
+    const blogId = req.params.id;
+  
+    // Extract user from req.user
+    const user = req.user as JwtPayload;
+  
+    await blogService.deleteBlog(blogId, user);
+  
+    res.status(200).json({
+      success: true,
+      message: "Blog deleted successfully",
+      statusCode: 200,
+    });
+  });
+
   export const blogController = {
     createBlog,
     updateBlog,
+    deleteBlog,
   }

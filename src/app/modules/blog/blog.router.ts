@@ -11,4 +11,7 @@ blogRouter.post("/blogs", auth(USER_ROLE.admin, USER_ROLE.user), blogController.
 
 blogRouter.patch("/blogs/:id", auth(USER_ROLE.user), blogController.updateBlog);
 
+blogRouter.delete("/blogs/:id", auth(USER_ROLE.user), blogController.deleteBlog);
+
+
 export default blogRouter;

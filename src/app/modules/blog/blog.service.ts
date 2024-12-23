@@ -39,9 +39,24 @@ const createBlog = async (blogData: Partial<IBlog>) => {
     return updatedBlog;
   };
 
+  const deleteBlog = async (blogId: string, user: JwtPayload) => {
+    const blog = await Blog.findById(blogId);
+  
+    if (!blog) {
+      throw new Error('Blog not found');
+    }
+  
+    // Ensure the user owns the blog
+    if (blog.author.toString() !== user._id) {
+      throw new Error('You are not authorized to delete this blog');
+    }
+  
+    await Blog.findByIdAndDelete(blogId);
+  };
+
 
   export const blogService = {
     createBlog,
     updateBlog,
- 
+    deleteBlog,
   }
