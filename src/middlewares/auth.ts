@@ -7,7 +7,7 @@ import User from "../app/modules/user/user.model";
 
 const auth = (...requiredRoles: TUserRole[]) => {
     return catchAsync(async ( req: Request, res: Response, next: NextFunction)=> {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization?.replace("Bearer ", "");
 
         if(!token) {
             throw new Error ( 'You are not authorized! ')
@@ -42,7 +42,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
           }
 
         req.user =  {
-            _id: user._id,
+            _id: user._id.toString(),
             role: user.role,
             email: user.email,
           } as JwtPayload;
