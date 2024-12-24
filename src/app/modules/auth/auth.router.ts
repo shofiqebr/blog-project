@@ -6,7 +6,7 @@ import { AuthValidation } from "./auth.validation";
 
 const authRouter = Router();
 
-authRouter.post('/register',validateRequest(UserValidation.userValidationSchema), AuthControllers.register)
-authRouter.post('/login', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.login);
+authRouter.post('/auth/register',validateRequest(UserValidation.userValidationSchema), AuthControllers.register)
+authRouter.post('/auth/login', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.login);
 
 export default authRouter;

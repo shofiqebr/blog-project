@@ -5,13 +5,12 @@ import Blog from "./blog.model"
 
 const createBlog = async (blogData: Partial<IBlog>) => {
       const result = await Blog.create(blogData)
+
+      const blog = await Blog.findById(result._id)
+      .select("-createdAt -updatedAt -__v")
+      .populate("author", "-password -__v");
   
-    // const data = new Tour(payload)
-  
-    //   data.color = "red"
-  
-    // const result = await data.save()
-    return result
+    return blog
   }
 
 
