@@ -17,12 +17,10 @@ export const getAllBlogs = async (query: BlogQueryOptions) => {
   try {
     const queryObj = { ...query };
     
-    // // Exclude special parameters
+    // Exclude special parameters
     const excludedFields = ["search", 
-      // "page", 
-      // "limit", 
-      // "sortBy", 
-      // "sortOrder", 
+      "sortBy", 
+      "sortOrder", 
       // "fields"
     ];
     excludedFields.forEach((key) => delete queryObj[key]);
@@ -37,35 +35,26 @@ export const getAllBlogs = async (query: BlogQueryOptions) => {
       })),
     });
 
-    // // Combine filters
-    // const filterQuery = { ...searchQuery, ...queryObj };
+ 
+    // sorting
 
-    // // Pagination
-    // const page = Number(query.page) || 1;
-    // const limit = Number(query.limit) || 10;
-    // const skip = (page - 1) * limit;
+    let sortStr = '';
 
-    // // Sorting
-    // const sortBy = query.sortBy || "createdAt";
-    // const sortOrder = query.sortOrder === "desc" ? -1 : 1;
-    // const sortQuery: { [key: string]: 1 | -1 } = { [sortBy]: sortOrder };
+    if(query?.sortBy && query?.sortOrder){
+      const sortBy = query.sortBy;
+      const sortOrder = query.sortOrder;
+      sortStr = `${sortOrder === "desc"? '-' : ''}${sortBy}`
+    }
+
+ 
 
     // // Field selection
     // const fields = query.fields ? query.fields.split(",").join(" ") : "-__v";
 
-    // // Logging for debugging
-    // console.log("Filter Query:", filterQuery);
-    // console.log("Sort Query:", sortQuery);
-    // console.log("Fields:", fields);
-    // console.log("Pagination - Page:", page, "Limit:", limit, "Skip:", skip);
 
     // Query execution
-    const result = await searchQuery.find(queryObj);
-    // .sort(sortQuery)
-    // .skip(skip)
-    // .limit(limit)
-    // .select(fields)
-    // .populate("author", "-password");
+    const result = await searchQuery.sort(sortStr);
+   
 
     return result;
   } catch (error) {
