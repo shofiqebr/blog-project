@@ -6,7 +6,7 @@ import { USER_ROLE } from "../user/user.constrants";
 
 const blogRouter = express.Router();
 
-// Route to create a blog
+
 blogRouter.post("/blogs", auth( USER_ROLE.user), blogController.createBlog);
 
 blogRouter.get("/blogs", blogController.getAllBlogs);

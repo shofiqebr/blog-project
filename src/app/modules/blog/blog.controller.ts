@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import { blogService } from "./blog.service"
 import catchAsync from "../../../utils/catchAsync"
 import { JwtPayload } from "jsonwebtoken"
-// import { isValidObjectId } from "mongoose"
+
 
 
 
@@ -10,10 +10,10 @@ import { JwtPayload } from "jsonwebtoken"
 const createBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
-    const user = req.user as JwtPayload; // Comes from the `auth` middleware
+    const user = req.user as JwtPayload;
     const authorId = user._id;
 
-    // Add the author field to the blog data
+
     const blogData = { ...body, author: authorId };
 
     const result = await blogService.createBlog(blogData);
@@ -24,7 +24,7 @@ const createBlog = async (req: Request, res: Response, next: NextFunction) => {
       data: result,
     });
   } catch (error) {
-    next(error); // Pass the error to the global error handler
+    next(error); 
   }
 };
 
@@ -49,16 +49,10 @@ export default createBlog;
   const updateBlog = catchAsync(async (req: Request, res: Response) => {
     const blogId = req.params.id;
 
-    // if (!isValidObjectId(blogId)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Invalid blog ID",
-    //   });
-    // }
 
     const { title, content } = req.body;
    
-   // Extract user from req.user (added by auth middleware)
+  
    const user = req.user as JwtPayload;
 
     const updatedBlog = await blogService.updateBlog(blogId, user, { title, content });
