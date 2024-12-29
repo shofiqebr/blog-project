@@ -13,55 +13,65 @@ const createBlog = async (blogData: Partial<IBlog>) => {
 };
 
 export const getAllBlogs = async (query: BlogQueryOptions) => {
-  console.log("main",query)
   try {
     const queryObj = { ...query };
-    
-    // Exclude special parameters
-    const excludedFields = ["search", 
-      "sortBy", 
-      "sortOrder", 
-      // "fields"
-    ];
+    const excludedFields = ["search", "sortBy", "sortOrder"];
     excludedFields.forEach((key) => delete queryObj[key]);
-    console.log(queryObj)
 
     // Search functionality
-    const search = query.search || '';
-    const searchableFields = ['title', 'content'];
-    const searchQuery = Blog.find({
-      $or: searchableFields.map((field) => ({
-        [field]: { $regex: search, $options: 'i' }, // case-insensitive
-      })),
-    });
+    const search = query.search || "";
+    // console.log("Search Term:", search);
+    const searchableFields = ["title", "content"];
+    const searchConditions = search
+      ? {
+          $or: searchableFields.map((field) => ({
+            [field]: { $regex: search, $options: "i" },
+          })),
+        }
+      : {};
 
- 
-    // sorting
+    // Combine filters
+    const filterQuery = { ...queryObj, ...searchConditions };
 
-    let sortStr = '';
+    // Sorting
+    const sortStr =
+      query.sortBy && query.sortOrder
+        ? `${query.sortOrder === "desc" ? "-" : ""}${query.sortBy}`
+        : "-createdAt"; 
 
-    if(query?.sortBy && query?.sortOrder){
-      const sortBy = query.sortBy;
-      const sortOrder = query.sortOrder;
-      sortStr = `${sortOrder === "desc"? '-' : ''}${sortBy}`
-    }
+    // Pagination
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
 
- 
-
-    // // Field selection
-    // const fields = query.fields ? query.fields.split(",").join(" ") : "-__v";
-
+    // Logging for debugging
+    // console.log("Filter Query:", filterQuery);
+    // console.log("Sort String:", sortStr);
+    // console.log("Pagination - Page:", page, "Limit:", limit, "Skip:", skip);
 
     // Query execution
-    const result = await searchQuery.sort(sortStr);
-   
+    const rawResult = await Blog.find(filterQuery);
+    console.log("Raw Query Result:", rawResult);
+
+    const result = await Blog.find(filterQuery)
+      .sort(sortStr)
+      .skip(skip)
+      .limit(limit)
+      .select("-__v")
+      .populate("author", "-password -__v");
+
+    // console.log("Processed Result:", result);
 
     return result;
   } catch (error) {
-    console.error('Error fetching blogs:', error);
-    throw new Error('Failed to fetch blogs');
+    console.error("Error fetching blogs:", error);
+    throw new Error("Failed to fetch blogs");
   }
 };
+
+
+
+
 
 const updateBlog = async (
   blogId: string,

@@ -33,52 +33,72 @@ export default createBlog;
 
 
 
-  const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
-    const blogs = await blogService.getAllBlogs(req.query);
+  const getAllBlogs = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try{
+
+      const blogs = await blogService.getAllBlogs(req.query);
   
-    res.status(200).json({
-      success: true,
-      message: "Blogs fetched successfully",
-      statusCode: 200,
-      data: blogs,
-    });
-  });
-  
-
-
-  const updateBlog = catchAsync(async (req: Request, res: Response) => {
-    const blogId = req.params.id;
-
-
-    const { title, content } = req.body;
+      res.status(200).json({
+        success: true,
+        message: "Blogs fetched successfully",
+        statusCode: 200,
+        data: blogs,
+      });
+    }catch(error){
+      next(error)
+    };
    
+  });
   
-   const user = req.user as JwtPayload;
 
-    const updatedBlog = await blogService.updateBlog(blogId, user, { title, content });
+
+  const updateBlog = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    try{
+      const blogId = req.params.id;
+
+
+      const { title, content } = req.body;
+     
+    
+     const user = req.user as JwtPayload;
   
-    res.status(200).json({
-      success: true,
-      message: "Blog updated successfully",
-      statusCode: 200,
-      data: updatedBlog,
-    });
+      const updatedBlog = await blogService.updateBlog(blogId, user, { title, content });
+    
+      res.status(200).json({
+        success: true,
+        message: "Blog updated successfully",
+        statusCode: 200,
+        data: updatedBlog,
+      });
+
+    }catch(error){
+      next(error)
+    };
+   
   });
 
 
-  const deleteBlog = catchAsync(async (req: Request, res: Response) => {
-    const blogId = req.params.id;
+  const deleteBlog = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    try{
+
+      const blogId = req.params.id;
   
-    // Extract user from req.user
-    const user = req.user as JwtPayload;
+      // Extract user from req.user
+      const user = req.user as JwtPayload;
+    
+      await blogService.deleteBlog(blogId, user);
+    
+      res.status(200).json({
+        success: true,
+        message: "Blog deleted successfully",
+        statusCode: 200,
+      });
+    }catch(error){
+      next(error)
+    };
   
-    await blogService.deleteBlog(blogId, user);
-  
-    res.status(200).json({
-      success: true,
-      message: "Blog deleted successfully",
-      statusCode: 200,
-    });
   });
 
   export const blogController = {
