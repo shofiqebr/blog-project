@@ -15,7 +15,7 @@ const createBlog = async (blogData: Partial<IBlog>) => {
 export const getAllBlogs = async (query: BlogQueryOptions) => {
   try {
     const queryObj = { ...query };
-    const excludedFields = ["search", "sortBy", "sortOrder"];
+    const excludedFields = ["search", "sortBy", "sortOrder", "filter"];
     excludedFields.forEach((key) => delete queryObj[key]);
 
     // Search functionality
@@ -30,8 +30,11 @@ export const getAllBlogs = async (query: BlogQueryOptions) => {
         }
       : {};
 
+       // Filter by author
+    const authorFilter = query.filter ? { author: query.filter } : {};
+
     // Combine filters
-    const filterQuery = { ...queryObj, ...searchConditions };
+    const filterQuery = { ...queryObj, ...searchConditions, ...authorFilter };
 
     // Sorting
     const sortStr =
@@ -50,8 +53,8 @@ export const getAllBlogs = async (query: BlogQueryOptions) => {
     // console.log("Pagination - Page:", page, "Limit:", limit, "Skip:", skip);
 
     // Query execution
-    const rawResult = await Blog.find(filterQuery);
-    console.log("Raw Query Result:", rawResult);
+    // const rawResult = await Blog.find(filterQuery);
+    // console.log("Raw Query Result:", rawResult);
 
     const result = await Blog.find(filterQuery)
       .sort(sortStr)
