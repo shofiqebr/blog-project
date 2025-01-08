@@ -25,7 +25,7 @@ const register = catchAsync(async(req: Request, res: Response)=> {
 
 const login = catchAsync(async(req: Request, res: Response)=>{
     const result = await AuthService.login(req.body);
-    const tokenWithBearer = `Bearer ${result?.token}`;
+    // const tokenWithBearer = `Bearer ${result?.token}`;
 
     sendResponse(res,{
         statusCode: StatusCodes.ACCEPTED,
@@ -33,7 +33,7 @@ const login = catchAsync(async(req: Request, res: Response)=>{
         message: "User logged in successfully",
      
         data: 
-        {token: tokenWithBearer}
+        {token: result?.token}
     })
 })
 
